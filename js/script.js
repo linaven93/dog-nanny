@@ -20,3 +20,37 @@ async function getDogImage() {
 function getRandomBreed() {
   return breeds[Math.floor(Math.random() * breeds.length)];
 }
+
+async function createCard() {
+  const user = await getRandomUser();
+  const dogImage = await getDogImage();
+  const breed = getRandomBreed();
+
+  const card = document.createElement("div");
+  card.classList.add("card");
+
+  card.innerHTML = `
+    <img src="${dogImage}" alt="Dog">
+    <img src="${user.picture.medium}" alt="User">
+    <h3>${user.name.first} ${user.name.last}</h3>
+    <p>${user.location.city}</p>
+    <p>Breed: ${breed}</p>
+    <button class="delete-btn">Delete</button>
+    <button class="chat-btn">Chat</button>
+  `;
+
+  return card;
+}
+
+async function loadCards() {
+  container.innerHTML = "";
+
+  for (let i = 0; i < 10; i++) {
+    const card = await createCard();
+    container.appendChild(card);
+  }
+}
+
+newCardsBtn.addEventListener("click", loadCards);
+
+loadCards();
