@@ -1,7 +1,6 @@
-console.log;
-
 const container = document.getElementById("card-container");
 const newCardsBtn = document.getElementById("new-cards-btn");
+const breedFilter = document.getElementById("breed-filter");
 
 const breeds = ["labrador", "husky", "pug", "beagle", "poodle"];
 
@@ -21,6 +20,17 @@ function getRandomBreed() {
   return breeds[Math.floor(Math.random() * breeds.length)];
 }
 
+function populateBreedFilter() {
+  breeds.forEach((breed) => {
+    const option = document.createElement("option");
+    option.value = breed;
+    option.textContent = breed;
+    breedFilter.appendChild(option);
+  });
+}
+
+populateBreedFilter();
+
 async function createCard() {
   const user = await getRandomUser();
   const dogImage = await getDogImage();
@@ -28,6 +38,7 @@ async function createCard() {
 
   const card = document.createElement("div");
   card.classList.add("card");
+  card.dataset.breed = breed;
 
   card.innerHTML = `
     <img src="${dogImage}" alt="Dog">
@@ -41,8 +52,8 @@ async function createCard() {
 
   const deleteBtn = card.querySelector(".delete-btn");
 
-  deleteBtn.addEventListener("click", async (event) => {
-    event.stopPropagation();
+  deleteBtn.addEventListener("click", async (e) => {
+    e.stopPropagation();
     card.remove();
 
     const newCard = await createCard();
@@ -62,5 +73,26 @@ async function loadCards() {
 }
 
 newCardsBtn.addEventListener("click", loadCards);
+
+breedFilter.addEventListener("change", () => {
+  const selected = breedFilter.value;
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach((card) => {
+    const deleteBtn = card.querySelector(".delete-btn");
+
+    if (selected === "all") {
+      card.style.display = "block";
+      if (deleteBtn) deleteBtn.style.display = "inline-block";
+    } else {
+      if (card.dataset.breed === selected) {
+        card.style.display = "block";
+        if (deleteBtn) deleteBtn.style.display = "none";
+      } else {
+        card.style.display = "none";
+      }
+    }
+  });
+});
 
 loadCards();
