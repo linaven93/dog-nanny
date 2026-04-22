@@ -39,6 +39,16 @@ async function createCard() {
     <button class="chat-btn">Chat</button>
   `;
 
+  const deleteBtn = card.querySelector(".delete-btn");
+
+  deleteBtn.addEventListener("click", async (event) => {
+    event.stopPropagation();
+    card.remove();
+
+    const newCard = await createCard();
+    container.appendChild(newCard);
+  });
+
   return card;
 }
 
