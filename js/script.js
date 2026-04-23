@@ -3,6 +3,14 @@ const newCardsBtn = document.getElementById("new-cards-btn");
 const breedFilter = document.getElementById("breed-filter");
 
 const breeds = ["labrador", "husky", "pug", "beagle", "poodle"];
+const dogMessages = [
+  "Voff voff",
+  "Grrr!",
+  "Mjau??",
+  "Voff!",
+  "Voff voff voff",
+  "WRAFF!!!",
+];
 
 async function getRandomUser() {
   const res = await fetch("https://randomuser.me/api/");
@@ -58,6 +66,28 @@ async function createCard() {
 
     const newCard = await createCard();
     container.appendChild(newCard);
+  });
+  card.addEventListener("click", (e) => {
+    if (
+      e.target.classList.contains("delete-btn") ||
+      e.target.classList.contains("chat-btn")
+    )
+      return;
+
+    let bubble = card.querySelector(".speech-bubble");
+
+    if (bubble) {
+      bubble.remove();
+      return;
+    }
+
+    const message = dogMessages[Math.floor(Math.random() * dogMessages.length)];
+
+    bubble = document.createElement("div");
+    bubble.classList.add("speech-bubble");
+    bubble.textContent = message;
+
+    card.appendChild(bubble);
   });
 
   return card;
