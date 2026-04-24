@@ -69,6 +69,7 @@ async function createCard() {
 
     const newCard = await createCard();
     container.appendChild(newCard);
+    breedFilter.dispatchEvent(new Event("change"));
   });
 
   chatBtn.addEventListener("click", (e) => {
@@ -134,6 +135,12 @@ async function createCard() {
       createMessage(input.value);
       input.value = "";
       updateStorage();
+    });
+
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendBtn.click();
+      }
     });
 
     closeBtn.addEventListener("click", (e) => {
