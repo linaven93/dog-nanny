@@ -44,6 +44,7 @@ async function createCard() {
   const user = await getRandomUser();
   const dogImage = await getDogImage();
   const breed = getRandomBreed();
+  const chatKey = `chat-${user.name.first}-${user.name.last}`;
 
   const card = document.createElement("div");
   card.classList.add("card");
@@ -85,6 +86,7 @@ async function createCard() {
 
     chatBox.innerHTML = `
       <p><strong>Owner:</strong> Hei! Kan du passe hunden min? 🐶</p>
+      <button class="close-chat">X</button>
       <input type="text" class="chat-input" placeholder="Skriv melding..." />
       <button class="send-btn">Send</button>
       <div class="messages"></div>
@@ -93,17 +95,50 @@ async function createCard() {
     const input = chatBox.querySelector(".chat-input");
     const sendBtn = chatBox.querySelector(".send-btn");
     const messagesDiv = chatBox.querySelector(".messages");
+    const closeBtn = chatBox.querySelector(".close-chat");
+
+    function updateStorage() {
+      const allMessages = [];
+      messagesDiv.querySelectorAll(".message").forEach((message) => {
+        allMessages.push(message.textContent);
+      });
+
+      localStorage.setItem(chatKey, JSON.stringify(allMessages));
+    }
+
+    function createMessage(text) {
+      const msg = document.createElement("p");
+      msg.textContent = text;
+      msg.classList.add("message");
+
+      msg.addEventListener("click", (e) => {
+        e.stopPropagation();
+        msg.remove();
+        updateStorage();
+      });
+
+      messagesDiv.appendChild(msg);
+    }
+
+    const savedMessages = JSON.parse(localStorage.getItem(chatKey)) || [];
+
+    savedMessages.forEach((message) => {
+      createMessage(message);
+    });
 
     sendBtn.addEventListener("click", (e) => {
       e.stopPropagation();
 
       if (input.value.trim() === "") return;
 
-      const msg = document.createElement("p");
-      msg.textContent = input.value;
-
-      messagesDiv.appendChild(msg);
+      createMessage(input.value);
       input.value = "";
+      updateStorage();
+    });
+
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      chatBox.remove();
     });
 
     card.appendChild(chatBox);
@@ -114,7 +149,9 @@ async function createCard() {
       e.target.classList.contains("delete-btn") ||
       e.target.classList.contains("chat-btn") ||
       e.target.classList.contains("send-btn") ||
-      e.target.classList.contains("chat-input")
+      e.target.classList.contains("chat-input") ||
+      e.target.classList.contains("close-chat") ||
+      e.target.classList.contains("message")
     ) {
       return;
     }

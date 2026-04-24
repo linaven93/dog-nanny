@@ -99,3 +99,11 @@ section {
   border-radius: 5px;
   margin-top: 5px;
 }
+.close-chat {
+  float: right;
+  background: red;
+  color: white;
+  border: none;
+  padding: 3px 6px;
+  cursor: pointer;
+}
