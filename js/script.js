@@ -3,6 +3,7 @@ const newCardsBtn = document.getElementById("new-cards-btn");
 const breedFilter = document.getElementById("breed-filter");
 
 const breeds = ["labrador", "husky", "pug", "beagle", "poodle"];
+
 const dogMessages = [
   "Voff voff",
   "Grrr!",
@@ -59,6 +60,7 @@ async function createCard() {
   `;
 
   const deleteBtn = card.querySelector(".delete-btn");
+  const chatBtn = card.querySelector(".chat-btn");
 
   deleteBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
@@ -67,12 +69,55 @@ async function createCard() {
     const newCard = await createCard();
     container.appendChild(newCard);
   });
+
+  chatBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    let chatBox = card.querySelector(".chat-box");
+
+    if (chatBox) {
+      chatBox.remove();
+      return;
+    }
+
+    chatBox = document.createElement("div");
+    chatBox.classList.add("chat-box");
+
+    chatBox.innerHTML = `
+      <p><strong>Owner:</strong> Hei! Kan du passe hunden min? 🐶</p>
+      <input type="text" class="chat-input" placeholder="Skriv melding..." />
+      <button class="send-btn">Send</button>
+      <div class="messages"></div>
+    `;
+
+    const input = chatBox.querySelector(".chat-input");
+    const sendBtn = chatBox.querySelector(".send-btn");
+    const messagesDiv = chatBox.querySelector(".messages");
+
+    sendBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      if (input.value.trim() === "") return;
+
+      const msg = document.createElement("p");
+      msg.textContent = input.value;
+
+      messagesDiv.appendChild(msg);
+      input.value = "";
+    });
+
+    card.appendChild(chatBox);
+  });
+
   card.addEventListener("click", (e) => {
     if (
       e.target.classList.contains("delete-btn") ||
-      e.target.classList.contains("chat-btn")
-    )
+      e.target.classList.contains("chat-btn") ||
+      e.target.classList.contains("send-btn") ||
+      e.target.classList.contains("chat-input")
+    ) {
       return;
+    }
 
     let bubble = card.querySelector(".speech-bubble");
 
